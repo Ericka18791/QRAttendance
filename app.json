@@ -4,7 +4,7 @@
     "slug": "QRAttendance",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "qrattendance",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -41,7 +41,8 @@
         }
       ],
       "expo-sqlite",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
