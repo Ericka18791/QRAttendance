@@ -2,12 +2,14 @@ import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,103 +22,107 @@ import { signIn } from '@/lib/auth';
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin() {
-    setError('');
-
-    if (!email.trim() || !password) {
-      setError('Please enter your email and password.');
-      return;
-    }
-
+  const handleLogin = async () => {
+    setError(null);
     setLoading(true);
 
-    const { error } = await signIn(email.trim(), password);
+    try {
+      const { data, error: authError } = await signIn(
+        email.trim(),
+        password
+      );
 
-    setLoading(false);
-    
-    if (error) {
-      setError(error.message);
-    } else {
-      router.replace('/(tabs)');
+      if (authError) {
+        setError(authError.message);
+      } else {
+        router.replace('/(tabs)');
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Unexpected error');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={[
-          styles.content,
-          {
-            paddingTop: insets.top + 20,
-            paddingBottom: insets.bottom + 20,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <Header title="Login" />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.headerContainer}>
+              <Header title="QR Attendance" />
+            </View>
 
-        <View style={styles.form}>
-          <Text style={styles.label}>Email</Text>
+            <Text style={styles.title}>Welcome Back</Text>
 
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            placeholderTextColor="#777"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-
-          <Text style={styles.label}>Password</Text>
-
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            placeholderTextColor="#777"
-            secureTextEntry
-            autoCapitalize="none"
-          />
-
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-
-          <AppButton
-            title={loading ? 'Logging in...' : 'Login'}
-            onPress={handleLogin}
-          />
-
-          {loading ? (
-            <ActivityIndicator
-              size="small"
-              color={COLORS.primary}
-              style={styles.loading}
-            />
-          ) : null}
-
-          <View style={styles.registerRow}>
-            <Text style={styles.registerText}>
-              Don't have an account?{' '}
+            <Text style={styles.subtitle}>
+              Sign in to record your attendance
             </Text>
 
-            <Link href="/register" style={styles.registerLink}>
-              Register
+            <View style={styles.form}>
+              <Text style={styles.label}>Email</Text>
+
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="your.email@school.edu"
+                placeholderTextColor={COLORS.textSecondary}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                editable={!loading}
+              />
+
+              <Text style={styles.label}>Password</Text>
+
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                placeholderTextColor={COLORS.textSecondary}
+                secureTextEntry
+                editable={!loading}
+              />
+
+              {error && <Text style={styles.error}>{error}</Text>}
+
+              {loading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={COLORS.primary}
+                  style={styles.loader}
+                />
+              ) : (
+                <AppButton
+                  theme="primary"
+                  title="Sign In"
+                  icon="log-in-outline"
+                  onPress={handleLogin}
+                />
+              )}
+            </View>
+
+            <Link href="/register" style={styles.link}>
+              Don't have an account? Sign Up
             </Link>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -125,50 +131,76 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  content: {
+
+  keyboardView: {
+    flex: 1,
+  },
+
+  scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
   },
+
+  headerContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 16,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: 4,
+  },
+
+  subtitle: {
+    fontSize: 15,
+    color: COLORS.textSecondary,
+    lineHeight: 21,
+    marginBottom: 32,
+  },
+
   form: {
-    marginTop: 30,
+    marginBottom: 24,
   },
+
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: COLORS.textPrimary,
-    marginBottom: 8,
-    marginTop: 16,
+    marginBottom: 6,
+    marginTop: 10,
   },
+
   input: {
     backgroundColor: COLORS.card,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
     color: COLORS.textPrimary,
   },
+
   error: {
-    color: COLORS.textPrimary,
-    marginTop: 12,
-    marginBottom: 12,
     fontSize: 14,
-    textAlign: 'left',
-  },
-  loading: {
-    marginTop: 12,
-  },
-  registerRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 24,
-  },
-  registerText: {
     color: COLORS.danger,
+    textAlign: 'left',
+    marginTop: 12,
+    marginBottom: 4,
   },
-  registerLink: {
+
+  loader: {
+    marginVertical: 16,
+  },
+
+  link: {
+    fontSize: 14,
     color: COLORS.primary,
+    textAlign: 'center',
     fontWeight: '600',
   },
 });

@@ -418,20 +418,20 @@ For EACH table (attendance, events, profiles):
 
 | # | Task | Done? |
 |---|---|---|
-| 1 | Opened the SQL Editor in Supabase | ☐ |
-| 2 | Pasted the full contents of `supabase/schema.sql` | ☐ |
-| 3 | Ran the SQL successfully (no errors) | ☐ |
-| 4 | `profiles` table appears in Table Editor | ☐ |
-| 5 | `events` table appears in Table Editor | ☐ |
-| 6 | `attendance` table appears in Table Editor | ☐ |
-| 7 | RLS enabled on `profiles` | ☐ |
-| 8 | RLS enabled on `events` | ☐ |
-| 9 | RLS enabled on `attendance` | ☐ |
-| 10 | I understand what a Primary Key is | ☐ |
-| 11 | I understand what a Foreign Key is | ☐ |
-| 12 | I understand why `unique (student_id, event_id)` prevents double-scanning | ☐ |
-| 13 | I understand what RLS does | ☐ |
-| 14 | I understand how the trigger auto-creates profiles | ☐ |
+| 1 | Opened the SQL Editor in Supabase | ☑ |
+| 2 | Pasted the full contents of `supabase/schema.sql` | ☑ |
+| 3 | Ran the SQL successfully (no errors) | ☑ |
+| 4 | `profiles` table appears in Table Editor | ☑ |
+| 5 | `events` table appears in Table Editor | ☑ |
+| 6 | `attendance` table appears in Table Editor | ☑ |
+| 7 | RLS enabled on `profiles` | ☑ |
+| 8 | RLS enabled on `events` | ☑ |
+| 9 | RLS enabled on `attendance` | ☑ |
+| 10 | I understand what a Primary Key is | ☑ |
+| 11 | I understand what a Foreign Key is | ☑ |
+| 12 | I understand why `unique (student_id, event_id)` prevents double-scanning | ☑ |
+| 13 | I understand what RLS does | ☑ |
+| 14 | I understand how the trigger auto-creates profiles | ☑ |
 
 ---
 

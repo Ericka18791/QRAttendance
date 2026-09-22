@@ -311,16 +311,16 @@ npx expo start
 
 | # | Task | Done? |
 |---|---|---|
-| 1 | `npx tsc --noEmit` passes | ☐ |
-| 2 | `lib/attendance.ts` created | ☐ |
-| 3 | Teacher History tab shows their events | ☐ |
-| 4 | Each event card shows an attendee count | ☐ |
-| 5 | Each event card lists students (ids + times) | ☐ |
-| 6 | A teacher with no events sees a helpful empty message | ☐ |
-| 7 | Student History tab still works as before | ☐ |
-| 8 | `attendance` rows in Supabase link to the teacher's events | ☐ |
-| 9 | I can explain the RLS policy that lets this work | ☐ |
-| 10 | I can explain why student NAMES aren't shown yet | ☐ |
+| 1 | `npx tsc --noEmit` passes | ☑ |
+| 2 | `lib/attendance.ts` created | ☑ |
+| 3 | Teacher History tab shows their events | ☑ |
+| 4 | Each event card shows an attendee count | ☑ |
+| 5 | Each event card lists students (ids + times) | ☑ |
+| 6 | A teacher with no events sees a helpful empty message | ☑ |
+| 7 | Student History tab still works as before | ☑ |
+| 8 | `attendance` rows in Supabase link to the teacher's events | ☑ |
+| 9 | I can explain the RLS policy that lets this work | ☑ |
+| 10 | I can explain why student NAMES aren't shown yet | ☑ |
 
 ---
 

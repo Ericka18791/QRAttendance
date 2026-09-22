@@ -433,16 +433,16 @@ npx expo start
 
 | # | Task | Done? |
 |---|---|---|
-| 1 | `npx tsc --noEmit` passes | ☐ |
-| 2 | Register screen has Full Name field | ☐ |
-| 3 | Register screen has Student/Teacher picker | ☐ |
-| 4 | Choosing Teacher and signing up → Profile shows Teacher badge | ☐ |
-| 5 | `profiles` table in Supabase has `role = 'teacher'` | ☐ |
-| 6 | Register a Student account → Profile shows Student badge | ☐ |
-| 7 | Editing the name on Profile updates `full_name` in Supabase | ☐ |
-| 8 | Signup with confirm-off lands on tabs (`router.replace`) | ☐ |
-| 9 | I can explain why we UPDATE (not insert) the profile row | ☐ |
-| 10 | I know which RLS policy lets a user edit their own profile | ☐ |
+| 1 | `npx tsc --noEmit` passes | ☑ |
+| 2 | Register screen has Full Name field | ☑ |
+| 3 | Register screen has Student/Teacher picker | ☑ |
+| 4 | Choosing Teacher and signing up → Profile shows Teacher badge | ☑ |
+| 5 | `profiles` table in Supabase has `role = 'teacher'` | ☑ |
+| 6 | Register a Student account → Profile shows Student badge | ☑ |
+| 7 | Editing the name on Profile updates `full_name` in Supabase | ☑ |
+| 8 | Signup with confirm-off lands on tabs (`router.replace`) | ☑ |
+| 9 | I can explain why we UPDATE (not insert) the profile row | ☑ |
+| 10 | I know which RLS policy lets a user edit their own profile | ☑ |
 
 ---
 

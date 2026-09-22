@@ -304,14 +304,14 @@ npx tsc --noEmit
 ### Step 2: Visual check (app running)
 | # | Task | Done? |
 |---|---|---|
-| 1 | App background is warm paper (`#F7F6F2`), not blue | ☐ |
-| 2 | Login/Register headings are left-aligned, strong ink | ☐ |
-| 3 | Inputs have 1px hairline borders, no drop shadow | ☐ |
-| 4 | Primary buttons are green with a 1px border | ☐ |
-| 5 | Non-primary buttons are flat white with a hairline border | ☐ |
-| 6 | Error text is red (`danger`), left-aligned | ☐ |
-| 7 | Tab bar is near-white with green active tab | ☐ |
-| 8 | Home screen content is left-aligned | ☐ |
+| 1 | App background is warm paper (`#F7F6F2`), not blue | ☑ |
+| 2 | Login/Register headings are left-aligned, strong ink | ☑ |
+| 3 | Inputs have 1px hairline borders, no drop shadow | ☑ |
+| 4 | Primary buttons are green with a 1px border | ☑ |
+| 5 | Non-primary buttons are flat white with a hairline border | ☑ |
+| 6 | Error text is red (`danger`), left-aligned | ☑ |
+| 7 | Tab bar is near-white with green active tab | ☑ |
+| 8 | Home screen content is left-aligned | ☑ |
 
 ### Step 3: Auth redirect check
 | # | Test | Expected |

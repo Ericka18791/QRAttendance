@@ -491,18 +491,18 @@ Then open it in **Expo Go** on your phone.
 
 | # | Task | Done? |
 |---|---|---|
-| 1 | `npx tsc --noEmit` runs with no errors | ☐ |
-| 2 | Teacher can create an event and see a QR code | ☐ |
-| 3 | Different student logs in and scans the QR | ☐ |
-| 4 | "Attendance recorded!" shows on a valid scan | ☐ |
-| 5 | History tab shows the scanned event | ☐ |
-| 6 | Scanning the same code twice shows "Already registered" | ☐ |
-| 7 | The attendance row appears in the Supabase `attendance` table | ☐ |
-| 8 | The event row appears in the Supabase `events` table | ☐ |
-| 9 | I understand why the screens didn't need to change | ☐ |
-| 10 | I know what error code `23505` means | ☐ |
-| 11 | I know why we write `start_time` / `end_time` not `start`/`end` | ☐ |
-| 12 | I can explain how `.upsert()` differs from `.insert()` | ☐ |
+| 1 | `npx tsc --noEmit` runs with no errors | ☑ |
+| 2 | Teacher can create an event and see a QR code | ☑ |
+| 3 | Different student logs in and scans the QR | ☑ |
+| 4 | "Attendance recorded!" shows on a valid scan | ☑ |
+| 5 | History tab shows the scanned event | ☑ |
+| 6 | Scanning the same code twice shows "Already registered" | ☑ |
+| 7 | The attendance row appears in the Supabase `attendance` table | ☑ |
+| 8 | The event row appears in the Supabase `events` table | ☑ |
+| 9 | I understand why the screens didn't need to change | ☑ |
+| 10 | I know what error code `23505` means | ☑ |
+| 11 | I know why we write `start_time` / `end_time` not `start`/`end` | ☑ |
+| 12 | I can explain how `.upsert()` differs from `.insert()` | ☑ |
 
 ---
 

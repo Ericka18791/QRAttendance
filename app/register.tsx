@@ -2,6 +2,7 @@ import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -9,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,26 +22,20 @@ import { signUp } from '@/lib/auth';
 
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
-
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function handleRegister() {
-    setError('');
+  const handleRegister = async () => {
+    setError(null);
 
-    if (
-      !fullName.trim() ||
-      !email.trim() ||
-      !password ||
-      !confirmPassword
-    ) {
-      setError('Please fill in all fields.');
+    if (!fullName.trim() || !email.trim() || !password || !confirmPassword) {
+      setError('All fields are required.');
       return;
     }
 
@@ -55,188 +51,178 @@ export default function RegisterScreen() {
 
     setLoading(true);
 
-    const { data, error: authError } = await signUp(
-      email.trim(),
-      password,
-      {
-        full_name: fullName.trim(),
-        role,
+    try {
+      const { data, error: authError } = await signUp(
+        email.trim(),
+        password,
+        {
+          full_name: fullName.trim(),
+          role,
+        }
+      );
+
+      if (authError) {
+        setError(authError.message);
+      } else if (data.session) {
+        router.replace('/(tabs)');
+      } else {
+        setSuccess(true);
       }
-    );
-
-    setLoading(false);
-
-    if (authError) {
-      setError(authError.message);
-      return;
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    if (data.session) {
-      router.replace('/(tabs)');
-    } else {
-      setSuccess(true);
-    }
-  }
-
-  if (success) {
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top + 20,
-            paddingBottom: insets.bottom + 20,
-          },
-        ]}
-      >
-        <Header title="Register" />
-
-        <View style={styles.successContainer}>
-          <Text style={styles.successTitle}>Check your email!</Text>
-
-          <Text style={styles.successText}>
-            We sent a confirmation link to your email address. Please check
-            your inbox before logging in.
-          </Text>
-
-          <Link href="/login" style={styles.loginLink}>
-            Go to Login
-          </Link>
-        </View>
-      </View>
-    );
-  }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={[
-          styles.content,
-          {
-            paddingTop: insets.top + 20,
-            paddingBottom: insets.bottom + 20,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <Header title="Register" />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.headerContainer}>
+              <Header title="QR Attendance" />
+            </View>
 
-        <View style={styles.form}>
-          <Text style={styles.label}>Full Name</Text>
+            <Text style={styles.title}>Create Account</Text>
+            <Text style={styles.subtitle}>
+              Register to start recording attendance
+            </Text>
 
-          <TextInput
-            style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
-            placeholder="Enter your full name"
-            placeholderTextColor="#777"
-            autoCapitalize="words"
-            autoComplete="name"
-          />
+            {success ? (
+              <View style={styles.successContainer}>
+                <Text style={styles.successTitle}>Check your email!</Text>
+                <Text style={styles.successText}>
+                  We sent a confirmation link to {email}. Click the link to
+                  verify your account, then come back and sign in.
+                </Text>
+                <Link href="/login" style={styles.link}>
+                  Back to Sign In
+                </Link>
+              </View>
+            ) : (
+              <View style={styles.form}>
+                <Text style={styles.label}>Full Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={fullName}
+                  onChangeText={setFullName}
+                  placeholder="Your full name"
+                  placeholderTextColor={COLORS.textSecondary}
+                  autoCapitalize="words"
+                  editable={!loading}
+                />
 
-          <Text style={styles.label}>I am a...</Text>
+                <Text style={styles.label}>I am a...</Text>
 
-          <View style={styles.roleRow}>
-            <Pressable
-              style={[
-                styles.roleChip,
-                role === 'student' && styles.roleChipActive,
-              ]}
-              onPress={() => setRole('student')}
-            >
-              <Text
-                style={[
-                  styles.roleChipText,
-                  role === 'student' && styles.roleChipTextActive,
-                ]}
-              >
-                Student
-              </Text>
-            </Pressable>
+                <View style={styles.roleRow}>
+                  <Pressable
+                    style={[
+                      styles.roleChip,
+                      role === 'student' && styles.roleChipActive,
+                    ]}
+                    onPress={() => setRole('student')}
+                    disabled={loading}
+                  >
+                    <Text
+                      style={[
+                        styles.roleChipText,
+                        role === 'student' && styles.roleChipTextActive,
+                      ]}
+                    >
+                      Student
+                    </Text>
+                  </Pressable>
 
-            <Pressable
-              style={[
-                styles.roleChip,
-                role === 'teacher' && styles.roleChipActive,
-              ]}
-              onPress={() => setRole('teacher')}
-            >
-              <Text
-                style={[
-                  styles.roleChipText,
-                  role === 'teacher' && styles.roleChipTextActive,
-                ]}
-              >
-                Teacher
-              </Text>
-            </Pressable>
-          </View>
+                  <Pressable
+                    style={[
+                      styles.roleChip,
+                      role === 'teacher' && styles.roleChipActive,
+                    ]}
+                    onPress={() => setRole('teacher')}
+                    disabled={loading}
+                  >
+                    <Text
+                      style={[
+                        styles.roleChipText,
+                        role === 'teacher' && styles.roleChipTextActive,
+                      ]}
+                    >
+                      Teacher
+                    </Text>
+                  </Pressable>
+                </View>
 
-          <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="your.email@school.edu"
+                  placeholderTextColor={COLORS.textSecondary}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  editable={!loading}
+                />
 
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            placeholderTextColor="#777"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
+                <Text style={styles.label}>Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="At least 6 characters"
+                  placeholderTextColor={COLORS.textSecondary}
+                  secureTextEntry
+                  editable={!loading}
+                />
 
-          <Text style={styles.label}>Password</Text>
+                <Text style={styles.label}>Confirm Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="Re-enter your password"
+                  placeholderTextColor={COLORS.textSecondary}
+                  secureTextEntry
+                  editable={!loading}
+                />
 
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            placeholderTextColor="#777"
-            secureTextEntry
-            autoCapitalize="none"
-          />
+                {error && <Text style={styles.error}>{error}</Text>}
 
-          <Text style={styles.label}>Confirm Password</Text>
+                {loading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                    style={styles.loader}
+                  />
+                ) : (
+                  <AppButton
+                    theme="primary"
+                    title="Sign Up"
+                    icon="person-add-outline"
+                    onPress={handleRegister}
+                  />
+                )}
+              </View>
+            )}
 
-          <TextInput
-            style={styles.input}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            placeholder="Confirm your password"
-            placeholderTextColor="#777"
-            secureTextEntry
-            autoCapitalize="none"
-          />
-
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-
-          <AppButton
-            title={loading ? 'Creating account...' : 'Register'}
-            onPress={handleRegister}
-          />
-
-          {loading ? (
-            <ActivityIndicator
-              size="small"
-              color={COLORS.primary}
-              style={styles.loading}
-            />
-          ) : null}
-
-          <View style={styles.loginRow}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-
-            <Link href="/login" style={styles.loginLink}>
-              Login
-            </Link>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {!success && (
+              <Link href="/login" style={styles.link}>
+                Already have an account? Sign In
+              </Link>
+            )}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -245,25 +231,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  content: {
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  headerContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: COLORS.textSecondary,
+    lineHeight: 21,
+    marginBottom: 32,
   },
   form: {
-    marginTop: 30,
+    marginBottom: 24,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: COLORS.textPrimary,
-    marginBottom: 8,
-    marginTop: 16,
+    marginBottom: 6,
+    marginTop: 10,
   },
   input: {
     backgroundColor: COLORS.card,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
@@ -288,53 +295,48 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary + '14',
   },
   roleChipText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: COLORS.textPrimary,
   },
   roleChipTextActive: {
-    color: '#FFFFFF',
+    color: COLORS.primary,
     fontWeight: '700',
   },
   error: {
-    color: COLORS.textPrimary,
-    marginTop: 12,
-    marginBottom: 12,
     fontSize: 14,
+    color: COLORS.danger,
     textAlign: 'left',
-  },
-  loading: {
     marginTop: 12,
+    marginBottom: 4,
   },
-  loginRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 24,
+  loader: {
+    marginVertical: 16,
   },
-  loginText: {
-    color: COLORS.textPrimary,
-  },
-  loginLink: {
+  link: {
+    fontSize: 14,
     color: COLORS.primary,
+    textAlign: 'center',
     fontWeight: '600',
   },
   successContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    marginBottom: 24,
+    padding: 20,
+    backgroundColor: COLORS.card,
+    borderRadius: 10,
   },
   successTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '700',
     color: COLORS.textPrimary,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   successText: {
-    fontSize: 16,
-    color: COLORS.danger,
-    textAlign: 'left',
-    lineHeight: 24,
-    marginBottom: 24,
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 16,
   },
 });

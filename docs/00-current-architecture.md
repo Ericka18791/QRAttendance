@@ -736,16 +736,16 @@ lib/
 
 Before starting migration, verify:
 
-- [ ] App starts without errors
-- [ ] Home screen displays correctly
-- [ ] Navigation between all 5 tabs works
-- [ ] Scan tab requests camera permission
-- [ ] Teacher tab creates event and generates QR
-- [ ] QR code is scannable
-- [ ] Scan tab records attendance
-- [ ] History tab displays records
-- [ ] Duplicate scan shows "Already registered"
-- [ ] 404 screen works
+- [x] App starts without errors
+- [x] Home screen displays correctly
+- [x] Navigation between all 5 tabs works
+- [x] Scan tab requests camera permission
+- [x] Teacher tab creates event and generates QR
+- [x] QR code is scannable
+- [x] Scan tab records attendance
+- [x] History tab displays records
+- [x] Duplicate scan shows "Already registered"
+- [x] 404 screen works
 
 ---
 
